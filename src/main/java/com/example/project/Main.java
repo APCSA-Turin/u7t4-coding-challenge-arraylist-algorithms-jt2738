@@ -101,7 +101,16 @@ public class Main{
    */
 
     public static ArrayList<String> parseSentence(String sentence){
-        return new ArrayList<String>();
+        int lastidx=0;
+        ArrayList<String> newList= new ArrayList<String>();
+        for(int i=0; i<sentence.length();i++){
+            if(sentence.substring(i, i+1).equals(" ")){
+                newList.add(sentence.substring(lastidx, i));
+                lastidx=i+1;
+            }
+        }
+        newList.add(sentence.substring(lastidx, sentence.length()));
+        return newList;
     }
 
 
@@ -186,6 +195,9 @@ public class Main{
     // swapEnds([8, 6, 7, 9, 5]) → [5, 6, 7, 9, 8]
     // swapEnds([]->[])
     public static ArrayList<Integer> swapEnds(ArrayList<Integer> list){        
+        if(list.size()==0){
+            return list;
+        }
         int temp= list.get(0);
         list.set(0, list.get(list.size()-1));
         list.set((list.size()-1), temp);
@@ -229,12 +241,15 @@ public class Main{
     public static ArrayList<Integer> notAlone(ArrayList<Integer> list, int val){
         for(int i=0;i<list.size();i++){
             if(list.get(i)==val){
-                if( i!=0 &&list.get(i)<list.get(i-1)){
-                    list.set(i, list.get(-1));
-                }else{
+                if(i==0 && list.get(i)<list.get(i+1)){
                     list.set(i, list.get(i+1));
+                }else if(i==0 && list.get(i)>list.get(i+1)){
+                    list.set(i, list.get(i));
+                }else if( i!=list.size()-1 && list.get(i-1)< list.get(i+1)){
+                    list.set(i, list.get(i+1));
+                }else{
+                    list.set(i, list.get(i-1));
                 }
-                break;
             }
         }
         return list;
@@ -249,6 +264,8 @@ public class Main{
     // shiftLeft([1]) → [1]
 
     public static ArrayList<Integer> shiftLeft(ArrayList<Integer> list){
+        list.add(list.get(0));
+        list.remove(0);
         return list;
     }
     
@@ -263,6 +280,18 @@ public class Main{
     // fix34([3, 2, 2, 4]) → [3, 4, 2, 2]
 
     public static ArrayList<Integer> fix34(ArrayList<Integer> list){
+        for(int i=0; i< list.size();i++){
+            if(list.get(i)==3){
+                for(int j=0; j< list.size();j++){
+                    if(list.get(j)==4 && list.get(j-1)!=3){
+                        int temp= list.get(j-1);
+                        list.set(i+1, list.get(j));
+                        list.set(j, temp);
+                        break;
+                    }
+                }
+            }
+        }
         return list;
     }
 
@@ -293,6 +322,46 @@ public class Main{
    *  @param numList  numList of ints
    */
     public static ArrayList<Integer> modes(int[] numList){
-        return new ArrayList<Integer>();
+        int max=1;
+        ArrayList<Integer> copy = new ArrayList<Integer>();
+        for (int i = 0; i < numList.length; i++) {
+            copy.add(numList[i]);
+        }
+        ArrayList<Integer> newList= new ArrayList<Integer>();
+        ArrayList<Integer> finalList= new ArrayList<Integer>();
+        for(int i=0; i<copy.size(); i++){
+            int idxCount=1;
+            for(int j=i+1; j<copy.size();j++){
+                if(copy.get(j)==copy.get(i)){
+                    idxCount++;
+                    copy.remove(j);
+                    j--;
+                }
+            }
+            newList.add(idxCount);
+        }
+        for(int i=0; i<newList.size();i++){
+            if(max<newList.get(i)){
+                max=newList.get(i);
+            }
+        }
+        boolean allSameFrequency = true;
+        for (int i = 0; i < newList.size(); i++) {
+            if (newList.get(i) != max) {
+                allSameFrequency = false;
+                break;
+            }
+        }
+        if(allSameFrequency){
+            return finalList;
+        }else{   
+        for(int i=0; i<newList.size();i++){
+                if(newList.get(i)==max){
+                    finalList.add(copy.get(i));
+                }
+            }
+        return finalList;
+        }
+
     }
 }
